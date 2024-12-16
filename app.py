@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import pickle
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import LabelEncoder
 
 # Load the trained model and scaler (ensure you have saved these earlier)
 @st.cache_resource
@@ -42,13 +42,17 @@ def user_input_features():
 
 # Collect user inputs
 input_df = user_input_features()
+X_df = input_df.copy()
+label_encoder= LabelEncoder()
+for col in X_df.columns:
+    X_df[col] = label_encoder.fit_transform(input_df[col])
 
 # Display the inputs
 st.subheader("User Input Features")
 st.write(input_df)
 
 # Preprocess inputs
-scaled_input = preprocessing.transform(input_df)
+scaled_input = preprocessing.transform(X_df)
 
 # Make predictions
 if st.button("Predict Credit Score"):
@@ -57,7 +61,7 @@ if st.button("Predict Credit Score"):
 
     # Display results
     st.subheader("Prediction Result")
-    if prediction == 0:
+    if prediction == 1:
         st.success("The user is classified as **Good Credit Risk**.")
     else:
         st.error("The user is classified as **Bad Credit Risk**.")
