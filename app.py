@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import pickle
 from sklearn.preprocessing import StandardScaler
+import xgboost 
 
 # Load the trained model and scaler (ensure you have saved these earlier)
 @st.cache_resource
@@ -57,13 +58,13 @@ if st.button("Predict Credit Score"):
 
     # Display results
     st.subheader("Prediction Result")
-    if prediction == 0:
+    if prediction == 1:
         st.success("The user is classified as **Good Credit Risk**.")
     else:
         st.error("The user is classified as **Bad Credit Risk**.")
     
     # Display probabilities
     st.write("Prediction probabilities:")
-    st.write(f"Bad Credit: {prediction_prob[0][1]:.2f}, Good Credit: {prediction_prob[0][0]:.2f}")
+    st.write(f"Bad Credit: {prediction_prob[0][0]:.2f}, Good Credit: {prediction_prob[0][1]:.2f}")
 
 
