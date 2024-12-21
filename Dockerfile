@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM python:3.12.8-slim
 
 WORKDIR /root/Project/Docker
 
@@ -12,4 +12,4 @@ RUN pip install -r /tmp/requirements.txt
 
 EXPOSE 8501
 
-CMD ["python","-m","streamlit","run", "/root/Project/Docker/app.py"]
+CMD ["python","-m","streamlit","run", "/root/Project/Docker/predictions.py"]
