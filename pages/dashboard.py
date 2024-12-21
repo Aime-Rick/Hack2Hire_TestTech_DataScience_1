@@ -2,10 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import pickle
-from sklearn.metrics import classification_report, precision_recall_curve, auc, confusion_matrix, roc_curve, precision_score, recall_score, f1_score, fbeta_score
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import auc, confusion_matrix, roc_curve, precision_score, recall_score, f1_score, fbeta_score
 import xgboost
 import plotly.express as px
 import plotly.graph_objects as go
@@ -127,15 +124,41 @@ elif section == "Confusion Matrix":
 elif section == "Credit Score Distribution":
     st.subheader("📊 Credit Score Distribution")
 
-    # Compute counts for each class
+    # Préparation des données pour le barplot
     counts = pd.Series(y_pred).value_counts().rename_axis('Risk Class').reset_index(name='Count')
     counts["Risk Class"] = counts["Risk Class"].map({0: "Bad Credit", 1: "Good Credit"})
+
     col1, col2 = st.columns([2, 1])
     with col1:
-        st.bar_chart(data=counts, x="Risk Class", y="Count", x_label="Risk", color="Risk Class", height=600)
+        # Création du barplot interactif avec Plotly
+        fig = px.bar(
+            counts,
+            x="Risk Class",
+            y="Count",
+            color="Risk Class",
+            title="Credit Score Distribution",
+            text="Count",  # Affiche les valeurs sur les barres
+            color_discrete_map={"Bad Credit": "red", "Good Credit": "green"}  # Couleurs personnalisées
+        )
+
+        # Mise en forme du graphique
+        fig.update_layout(
+            xaxis_title="Risk",
+            yaxis_title="Count",
+            showlegend=False,  # Cache la légende car chaque classe est déjà étiquetée
+            height=600,
+            width=600
+        )
+        fig.update_traces(texttemplate='%{text}', textposition='outside')  # Texte au-dessus des barres
+
+        # Affichage dans Streamlit
+        st.plotly_chart(fig, use_container_width=True)
+
     with col2:
         st.write("### Summary")
         st.write(f"Total Predictions: {len(y_pred)}")
         st.dataframe(counts, use_container_width=True)
+
+
 
 
