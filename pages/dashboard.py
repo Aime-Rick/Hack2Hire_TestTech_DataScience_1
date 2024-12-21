@@ -6,7 +6,13 @@ from sklearn.metrics import auc, confusion_matrix, roc_curve, precision_score, r
 import xgboost
 import plotly.express as px
 import plotly.graph_objects as go
-# Load the trained model and scaler
+
+st.set_page_config(
+    page_title="Model Performance Dashboard",
+    page_icon="📊",
+    layout="wide",
+)
+
 @st.cache_resource
 def load_model():
     with open("model.pkl", "rb") as f:
@@ -17,39 +23,39 @@ def load_model():
 
 model, preprocessing = load_model()
 
-st.set_page_config(page_title="Model Performance Dashboard", layout="wide", page_icon="📊")
-st.title("📊 Interactive Model Performance Dashboard")
+st.title("Interactive Model Performance Dashboard")
+st.markdown(
+    """
+    Welcome to the **Model Performance Dashboard**. This dashboard helps you understand 
+    the performance of the credit scoring model with metrics like ROC Curve, Confusion Matrix, 
+    and Credit Score Distribution. 
+    """
+)
 
-# Load or simulate test data and predictions
 @st.cache_data
 def load_test_data():
-    # Replace this with actual test data loading
-    X_test = pd.read_csv("data/X_test.csv")  # Simulate feature data
-    y_test = pd.read_csv("data/y_test.csv")  # Simulate true labels
+    X_test = pd.read_csv("data/X_test.csv")  
+    y_test = pd.read_csv("data/y_test.csv") 
     return X_test, y_test
 
 X_test, y_test = load_test_data()
 
-# Preprocess the test data
 X_test_1 = X_test.copy()
 X_test = preprocessing.transform(X_test)
 y_pred = model.predict(X_test)
 y_pred_prob = model.predict_proba(X_test)[:, 1]
 
-# Sidebar for navigation
 st.sidebar.title("🔍 Navigation")
 section = st.sidebar.radio("Go to", ["ROC Curve", "Confusion Matrix", "Credit Score Distribution"])
 
 if section == "ROC Curve":
     st.subheader("📉 ROC Curve")
 
-    # Compute ROC curve and AUC score
     fpr, tpr, thresholds = roc_curve(y_test, y_pred_prob)
     roc_auc = auc(fpr, tpr)
 
     col1, col2 = st.columns([2, 1])
     with col1:
-        # Create interactive ROC curve using Plotly
         fig = go.Figure()
         fig.add_trace(go.Scatter(
             x=fpr,
@@ -83,10 +89,8 @@ if section == "ROC Curve":
 elif section == "Confusion Matrix":
     st.subheader("🧮 Confusion Matrix")
 
-    # Confusion Matrix
     cm = confusion_matrix(y_test, y_pred)
 
-    # Convert confusion matrix to a DataFrame for Plotly
     cm_df = pd.DataFrame(
         cm,
         index=["Actual Negative", "Actual Positive"],
@@ -95,11 +99,10 @@ elif section == "Confusion Matrix":
 
     col1, col2 = st.columns([2, 1])
     with col1:
-        # Create interactive heatmap
         fig = px.imshow(
             cm_df,
-            text_auto=True,  # Display values in each cell
-            color_continuous_scale="Blues",  # Choose color scale
+            text_auto=True,  
+            color_continuous_scale="Blues",  
             labels=dict(x="Predicted", y="Actual", color="Count"),
         )
         fig.update_layout(
@@ -113,52 +116,43 @@ elif section == "Confusion Matrix":
         st.write("### Confusion Matrix Values")
         st.dataframe(cm_df, use_container_width=True)
 
-        # Display Metrics, f1-score, precision, recall, fbeta_score
-        st.write("### Metrics")
+        st.write("### Classification Metrics")
         st.write("f1-score: ", f1_score(y_test, y_pred).round(2))
-        st.write("precision: ", precision_score(y_test, y_pred).round(2))
-        st.write("recall: ", recall_score(y_test, y_pred).round(2))
-        st.write("fbeta_score: ", fbeta_score(y_test, y_pred, beta=0.5).round(2))
+        st.write("Precision: ", precision_score(y_test, y_pred).round(2))
+        st.write("Recall: ", recall_score(y_test, y_pred).round(2))
+        st.write("F-beta Score (beta=0.5): ", fbeta_score(y_test, y_pred, beta=0.5).round(2))
 
-# Credit Score Distribution Section
 elif section == "Credit Score Distribution":
     st.subheader("📊 Credit Score Distribution")
 
-    # Préparation des données pour le barplot
     counts = pd.Series(y_pred).value_counts().rename_axis('Risk Class').reset_index(name='Count')
     counts["Risk Class"] = counts["Risk Class"].map({0: "Bad Credit", 1: "Good Credit"})
 
     col1, col2 = st.columns([2, 1])
     with col1:
-        # Création du barplot interactif avec Plotly
         fig = px.bar(
             counts,
             x="Risk Class",
             y="Count",
             color="Risk Class",
             title="Credit Score Distribution",
-            text="Count",  # Affiche les valeurs sur les barres
-            color_discrete_map={"Bad Credit": "red", "Good Credit": "green"}  # Couleurs personnalisées
+            text="Count", 
+            color_discrete_map={"Bad Credit": "red", "Good Credit": "green"},  
         )
 
-        # Mise en forme du graphique
         fig.update_layout(
             xaxis_title="Risk",
             yaxis_title="Count",
-            showlegend=False,  # Cache la légende car chaque classe est déjà étiquetée
+            showlegend=False,  
             height=600,
             width=600
         )
-        fig.update_traces(texttemplate='%{text}', textposition='outside')  # Texte au-dessus des barres
+        fig.update_traces(texttemplate='%{text}', textposition='outside')  # Text above bars
 
-        # Affichage dans Streamlit
         st.plotly_chart(fig, use_container_width=True)
 
     with col2:
         st.write("### Summary")
         st.write(f"Total Predictions: {len(y_pred)}")
         st.dataframe(counts, use_container_width=True)
-
-
-
 
