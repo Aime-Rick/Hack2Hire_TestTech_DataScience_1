@@ -120,7 +120,7 @@ The dataset underwent the following preprocessing steps:
 
 1. Start the application:
    ```bash
-   python -m streamlit run app.py
+   python -m streamlit run predictions.py
    ```
 
 2. Open a web browser and navigate to:
