@@ -33,7 +33,7 @@ def user_input_features():
     saving_accounts = st.sidebar.selectbox("Saving Accounts", options=["little", "moderate","quite rich", "rich"])
     checking_account = st.sidebar.selectbox("Checking Account", options=["little", "moderate","rich"])
     credit_amount = st.sidebar.number_input("Credit Amount (in $)", 250, 50000, 5000)
-    duration = st.sidebar.slider("Duration (in month)", 0, 500, 5)
+    duration = st.sidebar.slider("Duration (in month)", 0, 200, 20)
     purpose = st.sidebar.selectbox("Purpose", options=["car", "radio/TV", "furniture/equipment", "business", "education", "repairs", "domestic appliances", "vacation/others"])
     
     # Convert input into a dataframe
