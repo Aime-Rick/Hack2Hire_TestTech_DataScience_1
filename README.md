@@ -2,11 +2,6 @@
 
 ## Credit Scoring Machine Learning Project
 
-## Overview
-This project focuses on building a machine learning model for credit scoring, which assesses the creditworthiness of individuals. The model predicts whether a loan applicant is likely to default based on historical data and various financial and demographic features. Credit scoring is a critical task for financial institutions to minimize risks and improve decision-making.
-
----
-
 ## Table of Contents
 - [Overview](#overview)
 - [Project Structure](#project-structure)
@@ -18,11 +13,22 @@ This project focuses on building a machine learning model for credit scoring, wh
 
 ---
 
+## Overview
+This project focuses on building a machine learning model for credit scoring, which assesses the creditworthiness of individuals. The model predicts whether a loan applicant is likely to default based on historical data and various financial and demographic features. Credit scoring is a critical task for financial institutions to minimize risks and improve decision-making.
+
+---
+
+
+
 ## Project Structure
 ```
 ├── data/                  # Credit Scoring dataset
 ├── CVs/                   # Resumes of team members
+├── pages/                 # Pages of the app
 ├── models.pkl             # Saved model 
+├── c1.pkl                 # Binary file
+├── c2.pkl                 # Binary file
+├── c3.pkl                 # Binary file
 ├── app.py                 # The credit_scoring app
 ├── requirements.txt       # Dependencies
 ├── processing.pkl         # Saved preprocessing pipeline
@@ -78,7 +84,7 @@ The dataset underwent the following preprocessing steps:
    - Tuned hyperparameters using Grid Search and Random Search.
 
 4. **Evaluation:**
-   - Assessed models using metrics such as Accuracy, Precision, Recall, and F1-score.
+   - Assessed models using metrics such as Accuracy, Precision, Recall, and F1-score, F-beta score.
 
 ---
 
@@ -87,7 +93,7 @@ The dataset underwent the following preprocessing steps:
 - **Libraries:**
   - Data Processing: `pandas`, `numpy`
   - Visualization: `matplotlib`, `seaborn`
-  - Modeling: `scikit-learn`
+  - Modeling: `scikit-learn`, `xgboost`
   - Deployment: `Streamlit`, `Docker`
 - **Environment:** Jupyter Notebook, VSCode, Docker
 
